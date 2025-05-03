@@ -1,24 +1,171 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import styled, { keyframes } from 'styled-components';
 
-// Animation keyframes
-const fadeIn = {
-  '@keyframes fadeIn': {
-    '0%': { opacity: 0, transform: 'translateY(20px)' },
-    '100%': { opacity: 1, transform: 'translateY(0)' }
-  },
-  animation: 'fadeIn 0.5s ease-in-out'
-};
+// Animations
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
-const pulse = {
-  '@keyframes pulse': {
-    '0%': { transform: 'scale(1)' },
-    '50%': { transform: 'scale(1.05)' },
-    '100%': { transform: 'scale(1)' }
-  },
-  animation: 'pulse 2s infinite'
-};
+const pulse = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
+const LoginContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: flex-end;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: url("/login_image.avif");
+  background-size: cover;
+  background-position: center;
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+`;
+
+const RightPanel = styled.div`
+  width: 40%;
+  min-width: 400px;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  backdrop-filter: blur(8px);
+`;
+
+const LoginCard = styled.div`
+  width: 100%;
+  max-width: 380px;
+  padding: 2.5rem;
+  background-color: rgba(40, 50, 70, 0.6);
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  color: white;
+  text-align: center;
+  animation: ${fadeIn} 0.5s ease-in-out;
+`;
+
+const Heading = styled.h2`
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  animation: ${fadeIn} 0.5s ease-in-out;
+`;
+
+const Subheading = styled.p`
+  font-size: 0.95rem;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+  animation: ${fadeIn} 0.5s ease-in-out 0.1s;
+  animation-fill-mode: both;
+`;
+
+const LoginForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  animation: ${fadeIn} 0.5s ease-in-out 0.2s;
+  animation-fill-mode: both;
+`;
+
+const Input = styled.input`
+  padding: 0.9rem 1.2rem;
+  background-color: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.3s ease;
+
+  &::placeholder {
+    color: rgba(255,255,255,0.7);
+  }
+
+  &:focus {
+    border-color: rgba(255,255,255,0.4);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+  }
+`;
+
+const LoginButton = styled.button`
+  padding: 0.9rem;
+  margin-top: 0.5rem;
+  background-color: rgba(255,255,255,0.2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: ${fadeIn} 0.5s ease-in-out 0.3s;
+  animation-fill-mode: both;
+
+  &:hover {
+    background-color: rgba(255,255,255,0.3);
+    animation: ${pulse} 2s infinite;
+  }
+`;
+
+const Footer = styled.div`
+  margin-top: 1.8rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.8);
+  animation: ${fadeIn} 0.5s ease-in-out 0.4s;
+  animation-fill-mode: both;
+`;
+
+const LoginLink = styled(Link)`
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 0.3rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+`;
+
+const ErrorMessage = styled.div`
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  text-align: center;
+  animation: ${fadeIn} 0.3s ease-in-out;
+`;
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -41,141 +188,16 @@ const Login = () => {
     }
   };
 
-  const styled = {
-    container: {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      height: '100vh',
-      width: '100vw',
-      display: 'flex',
-      justifyContent: 'flex-end',
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      backgroundImage: 'url("/login_image.avif")',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-    },
-    overlay: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      backgroundColor: 'rgba(0,0,0,0.4)',
-    },
-    rightPanel: {
-      width: '40%',
-      minWidth: '400px',
-      height: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '2rem',
-      backdropFilter: 'blur(8px)',
-    },
-    card: {
-      width: '100%',
-      maxWidth: '380px',
-      padding: '2.5rem',
-      backgroundColor: 'rgba(40, 50, 70, 0.6)',
-      backdropFilter: 'blur(4px)',
-      borderRadius: '12px',
-      border: '1px solid rgba(255,255,255,0.15)',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-      color: 'white',
-      textAlign: 'center',
-      ...fadeIn
-    },
-    heading: {
-      fontSize: '1.8rem',
-      fontWeight: '600',
-      marginBottom: '0.5rem',
-      animation: 'fadeIn 0.5s ease-in-out'
-    },
-    subheading: {
-      fontSize: '0.95rem',
-      opacity: 0.8,
-      marginBottom: '2rem',
-      animation: 'fadeIn 0.5s ease-in-out 0.1s',
-      animationFillMode: 'both'
-    },
-    form: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1.2rem',
-      animation: 'fadeIn 0.5s ease-in-out 0.2s',
-      animationFillMode: 'both'
-    },
-    input: {
-      padding: '0.9rem 1.2rem',
-      backgroundColor: 'rgba(255,255,255,0.1)',
-      border: '1px solid rgba(255,255,255,0.2)',
-      borderRadius: '8px',
-      color: 'white',
-      fontSize: '0.95rem',
-      outline: 'none',
-      transition: 'all 0.3s ease',
-      '&:focus': {
-        borderColor: 'rgba(255,255,255,0.4)',
-        boxShadow: '0 0 0 3px rgba(255,255,255,0.1)'
-      }
-    },
-    button: {
-      padding: '0.9rem',
-      marginTop: '0.5rem',
-      backgroundColor: 'rgba(255,255,255,0.2)',
-      color: 'white',
-      border: 'none',
-      borderRadius: '8px',
-      fontSize: '0.95rem',
-      fontWeight: '500',
-      cursor: 'pointer',
-      transition: 'all 0.3s ease',
-      animation: 'fadeIn 0.5s ease-in-out 0.3s',
-      animationFillMode: 'both',
-      '&:hover': {
-        backgroundColor: 'rgba(255,255,255,0.3)',
-        ...pulse
-      }
-    },
-    footer: {
-      marginTop: '1.8rem',
-      fontSize: '0.9rem',
-      color: 'rgba(255,255,255,0.8)',
-      animation: 'fadeIn 0.5s ease-in-out 0.4s',
-      animationFillMode: 'both'
-    },
-    link: {
-      color: 'white',
-      fontWeight: '600',
-      textDecoration: 'none',
-      marginLeft: '0.3rem',
-      transition: 'all 0.3s ease',
-      '&:hover': {
-        textDecoration: 'underline',
-        textUnderlineOffset: '3px'
-      }
-    },
-    error: {
-      color: '#ff6b6b',
-      fontSize: '0.85rem',
-      marginTop: '0.5rem',
-      textAlign: 'center',
-      animation: 'fadeIn 0.3s ease-in-out'
-    }
-  };
-
   return (
-    <div style={styled.container}>
-      <div style={styled.overlay} />
-      <div style={styled.rightPanel}>
-        <div style={styled.card}>
-          <h2 style={styled.heading}>Welcome Back</h2>
-          <p style={styled.subheading}>Sign in to continue your journey</p>
+    <LoginContainer>
+      <Overlay />
+      <RightPanel>
+        <LoginCard>
+          <Heading>Welcome Back</Heading>
+          <Subheading>Sign in to continue your journey</Subheading>
           
-          <form style={styled.form} onSubmit={handleSubmit}>
-            <input
-              style={styled.input}
+          <LoginForm onSubmit={handleSubmit}>
+            <Input
               type="email"
               name="email"
               placeholder="Enter your email"
@@ -183,8 +205,7 @@ const Login = () => {
               onChange={handleChange}
               required
             />
-            <input
-              style={styled.input}
+            <Input
               type="password"
               name="password"
               placeholder="Enter your password"
@@ -192,23 +213,22 @@ const Login = () => {
               onChange={handleChange}
               required
             />
-            <button
-              style={styled.button}
+            <LoginButton
               type="submit"
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}
             >
               Continue
-            </button>
-            {error && <div style={styled.error}>{error}</div>}
-          </form>
+            </LoginButton>
+            {error && <ErrorMessage>{error}</ErrorMessage>}
+          </LoginForm>
 
-          <div style={styled.footer}>
-            New to our platform? <Link to="/register" style={styled.link}>Register now</Link>
-          </div>
-        </div>
-      </div>
-    </div>
+          <Footer>
+            New to our platform? <LoginLink to="/register">Register now</LoginLink>
+          </Footer>
+        </LoginCard>
+      </RightPanel>
+    </LoginContainer>
   );
 };
 

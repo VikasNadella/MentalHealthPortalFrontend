@@ -9,6 +9,7 @@ import PostManagement from './components/PostManagement.jsx';
 import MaterialManagement from './components/MaterialManagement.jsx';
 import PsychiatristManagement from './components/PsychiatristManagement.jsx';
 import SupportSessionManagement from './components/SupportSessionManagement.jsx';
+import ContactUs from './components/ContactUs.jsx';
 
 const root = createRoot(document.getElementById('root'));
 root.render(
@@ -22,6 +23,7 @@ root.render(
       <Route path="/materials" element={<MaterialManagement />} />
       <Route path="/psychiatrists" element={<PsychiatristManagement />} />
       <Route path="/sessions" element={<SupportSessionManagement />} />
+      <Route path="/contact" element={<ContactUs />} />
       <Route path="/" element={<App />} />
     </Routes>
   </BrowserRouter>
