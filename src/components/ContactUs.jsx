@@ -36,7 +36,7 @@ const ContactUs = () => {
     setIsSubmitting(true);
 
     try {
-      await fetch("https://formspree.io/f/mqaerqlg", {
+      await fetch("https://formspree.io/f/myzwodej", {
         method: "POST",
         body: JSON.stringify({
           to: "mindcarehubadmin@gmail.com",
